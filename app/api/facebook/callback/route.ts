@@ -7,11 +7,11 @@ export async function GET(request: Request) {
   const error = searchParams.get('error')
   
   if (error) {
-    return NextResponse.redirect(`${https://simple-lead-forwarder-7xq65.ondigitalocean.app}?error=facebook_denied`)
+    return NextResponse.redirect(`https://simple-lead-forwarder-7xq65.ondigitalocean.app?error=facebook_denied`)
   }
   
   if (!code || !state) {
-    return NextResponse.redirect(`${https://simple-lead-forwarder-7xq65.ondigitalocean.app}?error=missing_params`)
+    return NextResponse.redirect(`https://simple-lead-forwarder-7xq65.ondigitalocean.app?error=missing_params`)
   }
 
   const webhookUrl = decodeURIComponent(state)
@@ -28,7 +28,7 @@ export async function GET(request: Request) {
     const tokenData = await tokenResponse.json()
 
     if (!tokenData.access_token) {
-      return NextResponse.redirect(`${https://simple-lead-forwarder-7xq65.ondigitalocean.app}?error=token_failed`)
+      return NextResponse.redirect(`https://simple-lead-forwarder-7xq65.ondigitalocean.app?error=token_failed`)
     }
 
     const accessToken = tokenData.access_token
@@ -40,7 +40,7 @@ export async function GET(request: Request) {
     const pagesData = await pagesResponse.json()
 
     if (!pagesData.data || pagesData.data.length === 0) {
-      return NextResponse.redirect(`${https://simple-lead-forwarder-7xq65.ondigitalocean.app}?error=no_pages`)
+      return NextResponse.redirect(`https://simple-lead-forwarder-7xq65.ondigitalocean.app?error=no_pages`)
     }
 
     // Redirect to page selection with token and webhook URL
@@ -54,9 +54,9 @@ export async function GET(request: Request) {
       })))
     })
 
-    return NextResponse.redirect(`${https://simple-lead-forwarder-7xq65.ondigitalocean.app}/select-page?${params.toString()}`)
+    return NextResponse.redirect(`https://simple-lead-forwarder-7xq65.ondigitalocean.app/select-page?${params.toString()}`)
   } catch (error) {
     console.error('Facebook callback error:', error)
-    return NextResponse.redirect(`${https://simple-lead-forwarder-7xq65.ondigitalocean.app}?error=callback_failed`)
+    return NextResponse.redirect(`https://simple-lead-forwarder-7xq65.ondigitalocean.app?error=callback_failed`)
   }
 }
