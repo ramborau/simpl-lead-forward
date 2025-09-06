@@ -15,7 +15,7 @@ export async function POST(request: Request) {
 
     const facebookAuthUrl = new URL('https://www.facebook.com/v18.0/dialog/oauth')
     facebookAuthUrl.searchParams.append('client_id', process.env.FACEBOOK_APP_ID!)
-    facebookAuthUrl.searchParams.append('redirect_uri', 'https://simple-lead-forwarder-7xq65.ondigitalocean.app/api/facebook/callback')
+    facebookAuthUrl.searchParams.append('redirect_uri', 'https://simple-lead-forwarder-umtbo.ondigitalocean.app/api/facebook/callback')
     facebookAuthUrl.searchParams.append('scope', 'pages_manage_metadata')
     facebookAuthUrl.searchParams.append('response_type', 'code')
     facebookAuthUrl.searchParams.append('state', encodedWebhookUrl) // Pass webhook URL in state
