@@ -8,7 +8,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Simple Lead Forwarder",
+  title: "Lead Forwarder",
   description: "Forward Facebook leads to your webhook instantly - no signup required",
 };
 

@@ -80,7 +80,7 @@ export default function HomePage() {
               <CheckCircle2 className="w-12 h-12 text-green-500" />
             </div>
             <h1 className="text-3xl font-bold text-[#00322c] mb-2">
-              Simple Lead Forwarder
+              Lead Forwarder
             </h1>
             <p className="text-[#00322c]">
               Your Facebook leads are being forwarded automatically
@@ -145,7 +145,7 @@ export default function HomePage() {
         {/* Header */}
         <div className="text-center py-8">
           <h1 className="text-4xl font-bold text-[#00322c] mb-2">
-            Simple Lead Forwarder
+            Lead Forwarder
           </h1>
           <p className="text-[#00322c]">
             Forward Facebook leads to your webhook instantly - no signup required
