@@ -5,10 +5,9 @@ import { useRouter } from 'next/navigation'
 import { Loader2, ExternalLink, Facebook, Webhook, CheckCircle2 } from 'lucide-react'
 
 export default function HomePage() {
-  const router = useRouter()
   const [webhookUrl, setWebhookUrl] = useState('')
   const [isConnected, setIsConnected] = useState(false)
-  const [config, setConfig] = useState<any>(null)
+  const [config, setConfig] = useState<Record<string, unknown> | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 

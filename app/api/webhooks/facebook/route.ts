@@ -18,7 +18,7 @@ function verifyWebhookSignature(body: string, signature: string | null): boolean
 }
 
 // Forward lead to configured webhook with retry logic
-async function forwardLead(leadData: any, webhookUrl: string, maxRetries: number = 3) {
+async function forwardLead(leadData: Record<string, unknown>, webhookUrl: string, maxRetries: number = 3) {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       console.log(`Simple app: Attempt ${attempt}/${maxRetries} for webhook: ${webhookUrl}`)
@@ -52,7 +52,7 @@ async function forwardLead(leadData: any, webhookUrl: string, maxRetries: number
           return false
         }
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       const errorDetails = {
         message: error.message,
         cause: error.cause,
@@ -109,7 +109,7 @@ export async function POST(request: Request) {
   console.log('Simple app processing webhook data:', JSON.stringify(body, null, 2))
 
   // Get configuration from cookie
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   const configCookie = cookieStore.get('simple-config')
   
   if (!configCookie) {
@@ -161,7 +161,7 @@ export async function POST(request: Request) {
           const leadData = await leadResponse.json()
           
           // Parse field data
-          const fields: any = {}
+          const fields: Record<string, string> = {}
           if (leadData.field_data) {
             for (const field of leadData.field_data) {
               fields[field.name] = field.values?.[0] || ''
