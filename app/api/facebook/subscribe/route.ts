@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { registerWebhookProgrammatically, subscribePageToWebhook } from '@/lib/facebook'
+import { setConfig } from '@/lib/config-store'
 
 export async function POST(request: Request) {
   try {
@@ -28,14 +29,7 @@ export async function POST(request: Request) {
       }, { status: 500 })
     }
 
-    // Store the configuration in cookies (since we're not using a database)
-    // In production, you might want to use encrypted cookies or another method
-    const response = NextResponse.json({ 
-      success: true,
-      message: 'Successfully subscribed to webhooks'
-    })
-
-    // Set secure HTTP-only cookie with configuration
+    // Store configuration in memory (server-side)
     const configData = {
       pageId,
       pageName,
@@ -44,6 +38,14 @@ export async function POST(request: Request) {
       webhookUrl,
       accessToken: pageAccessToken
     }
+    
+    setConfig(configData)
+    
+    // Also set cookie for client-side display (but not for webhook processing)
+    const response = NextResponse.json({ 
+      success: true,
+      message: 'Successfully subscribed to webhooks'
+    })
     
     response.cookies.set('simple-config', JSON.stringify(configData), {
       httpOnly: true,

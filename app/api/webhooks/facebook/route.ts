@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import crypto from 'crypto'
+import { getConfig } from '@/lib/config-store'
 
 // Verify Facebook webhook signature
 function verifyWebhookSignature(body: string, signature: string | null): boolean {
@@ -132,22 +133,32 @@ export async function POST(request: Request) {
 
   console.log('Simple app processing webhook data:', JSON.stringify(body, null, 2))
 
-  // Get configuration from cookie
-  const cookieStore = cookies()
-  const configCookie = cookieStore.get('simple-config')
+  // Get configuration from in-memory store
+  const config = getConfig()
   
-  if (!configCookie) {
-    console.log('Simple app: No configuration found')
-    return NextResponse.json({ error: 'No configuration' }, { status: 404 })
+  if (!config) {
+    console.log('Simple app: No configuration found in memory')
+    // Try to get from cookie as fallback (for backwards compatibility)
+    const cookieStore = cookies()
+    const configCookie = cookieStore.get('simple-config')
+    
+    if (!configCookie) {
+      console.log('Simple app: No configuration found')
+      return NextResponse.json({ error: 'No configuration - please reconnect Facebook' }, { status: 404 })
+    }
+    
+    try {
+      const cookieConfig = JSON.parse(configCookie.value)
+      console.log('Simple app: Using configuration from cookie')
+      // Note: This won't work for webhooks since Facebook doesn't send cookies
+      return NextResponse.json({ error: 'Configuration exists but not accessible. Please reconnect Facebook.' }, { status: 404 })
+    } catch (error) {
+      console.log('Simple app: Invalid configuration')
+      return NextResponse.json({ error: 'Invalid configuration' }, { status: 500 })
+    }
   }
-
-  let config
-  try {
-    config = JSON.parse(configCookie.value)
-  } catch (error) {
-    console.log('Simple app: Invalid configuration')
-    return NextResponse.json({ error: 'Invalid configuration' }, { status: 500 })
-  }
+  
+  console.log('Simple app: Configuration found for webhook:', config.webhookUrl)
 
   try {
     // Process lead data
