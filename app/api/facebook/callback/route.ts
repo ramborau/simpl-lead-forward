@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { registerWebhookProgrammatically } from '@/lib/facebook'
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
@@ -32,6 +33,12 @@ export async function GET(request: Request) {
     }
 
     const accessToken = tokenData.access_token
+
+    // Register webhook programmatically (safe to call multiple times)
+    const webhookRegistration = await registerWebhookProgrammatically()
+    if (!webhookRegistration.success) {
+      console.warn('Webhook registration failed (may already exist):', webhookRegistration.error)
+    }
 
     // Get user's pages
     const pagesResponse = await fetch(

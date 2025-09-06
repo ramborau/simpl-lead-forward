@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { registerWebhookProgrammatically, subscribePageToWebhook } from '@/lib/facebook'
 
 export async function POST(request: Request) {
   try {
@@ -9,26 +10,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
-    // Subscribe to page webhooks for leadgen
-    const subscribeUrl = `https://graph.facebook.com/v18.0/${pageId}/subscribed_apps`
-    
-    const subscribeResponse = await fetch(subscribeUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        access_token: pageAccessToken,
-        subscribed_fields: 'leadgen'
-      })
-    })
+    // First, register the webhook at app level (this is idempotent, safe to call multiple times)
+    const appRegistration = await registerWebhookProgrammatically()
+    if (!appRegistration.success) {
+      console.warn('App-level webhook registration failed (may already exist):', appRegistration.error)
+      // Continue anyway as it might already be registered
+    }
 
-    if (!subscribeResponse.ok) {
-      const errorData = await subscribeResponse.json()
-      console.error('Facebook subscription error:', errorData)
+    // Subscribe the specific page to webhook events
+    const pageSubscription = await subscribePageToWebhook(pageId, pageAccessToken)
+    
+    if (!pageSubscription.success) {
+      console.error('Page subscription error:', pageSubscription.error)
       return NextResponse.json({ 
-        error: 'Failed to subscribe to Facebook webhooks',
-        details: errorData 
+        error: 'Failed to subscribe page to Facebook webhooks',
+        details: pageSubscription.error 
       }, { status: 500 })
     }
 
