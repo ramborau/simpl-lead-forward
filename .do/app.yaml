@@ -1,0 +1,24 @@
+name: simple-lead-forwarder
+services:
+- name: web
+  source_dir: /
+  github:
+    repo: ramborau/simpl-lead-forward
+    branch: main
+  build_command: npm run build
+  environment_slug: node-js
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  http_port: 3000
+  routes:
+  - path: /
+  run_command: npm start
+  envs:
+  - key: NODE_ENV
+    value: production
+  - key: NEXTAUTH_SECRET
+    value: your-secret-key-here-simple-lead-forwarder
+  - key: FACEBOOK_APP_ID  
+    value: "2198791380632171"
+  - key: FACEBOOK_APP_SECRET
+    value: "a64f04aa753414f538b3d9bc02cafcb8"
