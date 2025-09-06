@@ -132,10 +132,10 @@ function SelectPageContent() {
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 p-4">
       <div className="max-w-4xl mx-auto">
         <div className="text-center py-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-[#00322c] mb-2">
             Select Your Page and Form
           </h1>
-          <p className="text-gray-600">
+          <p className="text-[#00322c]">
             Choose the Facebook page and lead form to connect
           </p>
         </div>
@@ -191,7 +191,7 @@ function SelectPageContent() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-semibold">{page.name}</p>
-                      <p className="text-sm text-gray-500">ID: {page.id}</p>
+                      <p className="text-sm text-[#00322c]">ID: {page.id}</p>
                     </div>
                     <ChevronRight className="text-gray-400" />
                   </div>
@@ -205,7 +205,7 @@ function SelectPageContent() {
         {selectedPage && !selectedForm && (
           <div className="bg-white rounded-xl shadow-xl p-6">
             <div className="mb-4">
-              <p className="text-sm text-gray-600">Selected Page:</p>
+              <p className="text-sm text-[#00322c]">Selected Page:</p>
               <p className="font-semibold">{selectedPage.name}</p>
             </div>
             
@@ -230,7 +230,7 @@ function SelectPageContent() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="font-semibold">{form.name}</p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-[#00322c]">
                           Status: {form.status} 
                           {form.leads_count !== undefined && ` • ${form.leads_count} leads`}
                         </p>
@@ -241,7 +241,7 @@ function SelectPageContent() {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-[#00322c]">
                 <FileText className="w-12 h-12 mx-auto mb-2 text-gray-300" />
                 <p>No lead forms found for this page.</p>
                 <p className="text-sm mt-2">Please create a lead form in Facebook first.</p>
@@ -256,7 +256,7 @@ function SelectPageContent() {
             <div className="flex flex-col items-center">
               <Loader2 className="w-12 h-12 animate-spin text-[#00c307] mb-4" />
               <p className="text-lg font-semibold">Setting up webhook...</p>
-              <p className="text-sm text-gray-500 mt-2">This will just take a moment</p>
+              <p className="text-sm text-[#00322c] mt-2">This will just take a moment</p>
             </div>
           </div>
         )}
@@ -271,7 +271,7 @@ export default function SelectPagePage() {
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 p-4 flex items-center justify-center">
         <div className="bg-white rounded-lg p-6 shadow-xl">
           <Loader2 className="w-8 h-8 animate-spin text-[#00c307] mx-auto" />
-          <p className="mt-2 text-gray-600">Loading...</p>
+          <p className="mt-2 text-[#00322c]">Loading...</p>
         </div>
       </div>
     }>

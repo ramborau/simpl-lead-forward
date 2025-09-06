@@ -79,10 +79,10 @@ export default function HomePage() {
             <div className="flex items-center justify-center mb-4">
               <CheckCircle2 className="w-12 h-12 text-green-500" />
             </div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-bold text-[#00322c] mb-2">
               Simple Lead Forwarder
             </h1>
-            <p className="text-gray-600">
+            <p className="text-[#00322c]">
               Your Facebook leads are being forwarded automatically
             </p>
           </div>
@@ -130,7 +130,7 @@ export default function HomePage() {
           </div>
 
           {/* Info */}
-          <div className="text-center text-gray-600 text-sm">
+          <div className="text-center text-[#00322c] text-sm">
             <p>When someone submits your Facebook lead form, the data will be automatically</p>
             <p>forwarded to your configured webhook URL in real-time.</p>
           </div>
@@ -144,10 +144,10 @@ export default function HomePage() {
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center py-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
+          <h1 className="text-4xl font-bold text-[#00322c] mb-2">
             Simple Lead Forwarder
           </h1>
-          <p className="text-gray-600">
+          <p className="text-[#00322c]">
             Forward Facebook leads to your webhook instantly - no signup required
           </p>
         </div>
@@ -165,7 +165,7 @@ export default function HomePage() {
           <div className="space-y-6">
             {/* Step 1 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-[#00322c] mb-2">
                 1. Enter Your Webhook URL
               </label>
               <input
@@ -176,14 +176,14 @@ export default function HomePage() {
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 disabled={loading}
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-[#00322c] mt-1">
                 Your server endpoint where leads will be sent
               </p>
             </div>
 
             {/* Step 2 */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+              <label className="block text-sm font-medium text-[#00322c] mb-3">
                 2. Connect Your Facebook Page
               </label>
               <button
