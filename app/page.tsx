@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2, ExternalLink, Facebook, Webhook, CheckCircle2 } from 'lucide-react'
+import { Loader2, ExternalLink, Facebook, Webhook, CheckCircle2, RefreshCw, Trash2, Eye, EyeOff } from 'lucide-react'
 
 export default function HomePage() {
   const [webhookUrl, setWebhookUrl] = useState('')
@@ -10,6 +10,9 @@ export default function HomePage() {
   const [config, setConfig] = useState<Record<string, unknown> | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [debugData, setDebugData] = useState<any[]>([])
+  const [showDebugData, setShowDebugData] = useState(false)
+  const [debugLoading, setDebugLoading] = useState(false)
 
   useEffect(() => {
     // Check if user is already configured
@@ -70,6 +73,50 @@ export default function HomePage() {
     setWebhookUrl('')
   }
 
+  const fetchDebugData = async () => {
+    setDebugLoading(true)
+    try {
+      const response = await fetch('/api/debug')
+      if (response.ok) {
+        const data = await response.json()
+        setDebugData(data.debug_data || [])
+      }
+    } catch (error) {
+      console.error('Failed to fetch debug data:', error)
+    }
+    setDebugLoading(false)
+  }
+
+  const clearDebugData = async () => {
+    try {
+      const response = await fetch('/api/debug', { method: 'DELETE' })
+      if (response.ok) {
+        setDebugData([])
+      }
+    } catch (error) {
+      console.error('Failed to clear debug data:', error)
+    }
+  }
+
+  useEffect(() => {
+    if (isConnected && showDebugData) {
+      fetchDebugData()
+      // Auto-refresh debug data every 5 seconds when visible
+      const interval = setInterval(fetchDebugData, 5000)
+      return () => clearInterval(interval)
+    }
+  }, [isConnected, showDebugData])
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'webhook_received': return 'text-blue-600 bg-blue-50'
+      case 'lead_processed': return 'text-green-600 bg-green-50'  
+      case 'webhook_forwarded': return 'text-purple-600 bg-purple-50'
+      case 'error': return 'text-red-600 bg-red-50'
+      default: return 'text-gray-600 bg-gray-50'
+    }
+  }
+
   if (isConnected && config) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-green-50 to-emerald-100 p-4">
@@ -127,6 +174,84 @@ export default function HomePage() {
                 Disconnect & Reset
               </button>
             </div>
+          </div>
+
+          {/* Debug Data Section */}
+          <div className="bg-white rounded-xl shadow-xl p-6 mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold">Debug Data</h2>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setShowDebugData(!showDebugData)}
+                  className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded text-sm flex items-center space-x-1"
+                >
+                  {showDebugData ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  <span>{showDebugData ? 'Hide' : 'Show'}</span>
+                </button>
+                {showDebugData && (
+                  <>
+                    <button
+                      onClick={fetchDebugData}
+                      disabled={debugLoading}
+                      className="px-3 py-1 bg-blue-100 hover:bg-blue-200 rounded text-sm flex items-center space-x-1 disabled:opacity-50"
+                    >
+                      <RefreshCw className={`w-4 h-4 ${debugLoading ? 'animate-spin' : ''}`} />
+                      <span>Refresh</span>
+                    </button>
+                    <button
+                      onClick={clearDebugData}
+                      className="px-3 py-1 bg-red-100 hover:bg-red-200 rounded text-sm flex items-center space-x-1"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      <span>Clear</span>
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {showDebugData && (
+              <div className="space-y-3 max-h-96 overflow-y-auto">
+                {debugData.length === 0 ? (
+                  <div className="text-center py-8 text-gray-500">
+                    <p>No debug data yet. Submit a test lead to see data flow.</p>
+                  </div>
+                ) : (
+                  debugData.map((entry) => (
+                    <div key={entry.id} className="border rounded-lg p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center space-x-2">
+                          <span className={`px-2 py-1 rounded text-xs font-medium ${getTypeColor(entry.type)}`}>
+                            {entry.type.replace('_', ' ').toUpperCase()}
+                          </span>
+                          <span className="text-xs text-gray-500">
+                            {new Date(entry.timestamp).toLocaleTimeString()}
+                          </span>
+                        </div>
+                        {entry.success !== undefined && (
+                          <span className={`text-xs px-2 py-1 rounded ${entry.success ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                            {entry.success ? 'SUCCESS' : 'FAILED'}
+                          </span>
+                        )}
+                      </div>
+                      {entry.error && (
+                        <div className="text-red-600 text-sm mb-2 font-medium">
+                          Error: {entry.error}
+                        </div>
+                      )}
+                      <details className="text-sm">
+                        <summary className="cursor-pointer text-gray-600 hover:text-gray-800">
+                          View Data
+                        </summary>
+                        <pre className="mt-2 text-xs bg-gray-50 p-2 rounded overflow-x-auto">
+                          {JSON.stringify(entry.data, null, 2)}
+                        </pre>
+                      </details>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </div>
 
           {/* Info */}

@@ -17,6 +17,20 @@ function verifyWebhookSignature(body: string, signature: string | null): boolean
   return signature === `sha256=${expectedSignature}`
 }
 
+// Log debug data to our debug endpoint
+async function logDebugData(type: string, data: any, success?: boolean, error?: string) {
+  try {
+    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+    await fetch(`${baseUrl}/api/debug`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type, data, success, error })
+    })
+  } catch (e) {
+    console.log('Failed to log debug data:', e)
+  }
+}
+
 // Forward lead to configured webhook with retry logic
 async function forwardLead(leadData: Record<string, unknown>, webhookUrl: string, maxRetries: number = 3) {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
@@ -45,9 +59,11 @@ async function forwardLead(leadData: Record<string, unknown>, webhookUrl: string
 
       if (response.ok) {
         console.log(`Simple app webhook forwarding successful on attempt ${attempt}`)
+        await logDebugData('webhook_forwarded', { webhookUrl, attempt, status: response.status }, true)
         return true
       } else {
         console.error(`Simple app: Attempt ${attempt} failed with status ${response.status}: ${response.statusText}`)
+        await logDebugData('webhook_forwarded', { webhookUrl, attempt, status: response.status, statusText: response.statusText }, false, `HTTP ${response.status}: ${response.statusText}`)
         if (attempt === maxRetries) {
           return false
         }
@@ -90,6 +106,14 @@ export async function POST(request: Request) {
     headers: Object.fromEntries(request.headers.entries()),
     bodyPreview: rawBody.substring(0, 200),
     signature
+  })
+
+  // Log ALL incoming webhook data for debugging
+  await logDebugData('webhook_received', {
+    headers: Object.fromEntries(request.headers.entries()),
+    body: rawBody,
+    signature,
+    timestamp: new Date().toISOString()
   })
   
   // Verify webhook signature
@@ -180,6 +204,15 @@ export async function POST(request: Request) {
             raw_data: leadData
           }
 
+          // Log the processed lead data
+          await logDebugData('lead_processed', {
+            leadgenId,
+            pageId,
+            formId,
+            lead,
+            webhookUrl: config.webhookUrl
+          })
+
           // Forward to webhook
           const forwarded = await forwardLead(lead, config.webhookUrl)
           
@@ -187,6 +220,7 @@ export async function POST(request: Request) {
             console.log(`Simple app: Successfully forwarded lead ${leadgenId}`)
           } else {
             console.error(`Simple app: Failed to forward lead ${leadgenId}`)
+            await logDebugData('error', { leadgenId, error: 'Failed to forward lead after all retries' }, false, 'Webhook forwarding failed')
           }
         }
       }
