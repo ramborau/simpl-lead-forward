@@ -133,7 +133,7 @@ export async function POST(request: Request) {
   console.log('Simple app processing webhook data:', JSON.stringify(body, null, 2))
 
   // Get configuration from cookie
-  const cookieStore = await cookies()
+  const cookieStore = cookies()
   const configCookie = cookieStore.get('simple-config')
   
   if (!configCookie) {

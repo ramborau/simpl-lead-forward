@@ -9,12 +9,15 @@ const NEXTAUTH_SECRET = process.env.NEXTAUTH_SECRET!
 export async function registerWebhookProgrammatically() {
   try {
     console.log('Registering webhook programmatically with Facebook...')
+    console.log('App ID:', FACEBOOK_APP_ID)
+    console.log('NEXTAUTH_URL:', NEXTAUTH_URL)
     
     // Use app access token for app-level operations
     const appAccessToken = `${FACEBOOK_APP_ID}|${FACEBOOK_APP_SECRET}`
     
     const webhookUrl = `${NEXTAUTH_URL}/api/webhooks/facebook`
     console.log('Webhook URL:', webhookUrl)
+    console.log('Verify Token:', NEXTAUTH_SECRET)
     
     // Register webhook subscription at app level
     const response = await fetch(
