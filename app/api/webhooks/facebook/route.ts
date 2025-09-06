@@ -174,11 +174,14 @@ export async function POST(request: Request) {
             continue
           }
 
-          // Only process if it's from the configured form
+          // Only process if it's from one of the configured forms
           const formId = change.value.form_id
-          if (formId && config.formId && formId !== config.formId) {
-            console.log(`Simple app: Ignoring lead from different form: ${formId}`)
-            continue
+          if (formId && config.forms && config.forms.length > 0) {
+            const isFormConfigured = config.forms.some(form => form.id === formId)
+            if (!isFormConfigured) {
+              console.log(`Simple app: Ignoring lead from unconfigured form: ${formId}`)
+              continue
+            }
           }
 
           console.log(`Simple app: Processing lead ${leadgenId} from page ${pageId}`)
@@ -203,11 +206,14 @@ export async function POST(request: Request) {
             }
           }
 
+          // Find the form name from configuration
+          const formName = config.forms?.find(form => form.id === formId)?.name || 'Unknown Form'
+
           // Prepare lead object
           const lead = {
             id: leadgenId,
-            form_id: formId || config.formId,
-            form_name: config.formName,
+            form_id: formId,
+            form_name: formName,
             page_id: pageId,
             page_name: config.pageName,
             created_time: leadData.created_time,

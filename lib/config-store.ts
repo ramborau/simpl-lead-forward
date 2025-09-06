@@ -1,11 +1,15 @@
 // Simple in-memory configuration store
 // In production, you'd want to use a database or Redis
 
-interface Config {
+export interface FormConfig {
+  id: string
+  name: string
+}
+
+export interface Config {
   pageId: string
   pageName: string
-  formId: string
-  formName: string
+  forms: FormConfig[]
   webhookUrl: string
   accessToken: string
 }
@@ -18,7 +22,7 @@ export function setConfig(config: Config) {
   console.log('Configuration stored:', {
     pageId: config.pageId,
     pageName: config.pageName,
-    formId: config.formId,
+    forms: config.forms,
     webhookUrl: config.webhookUrl
   })
 }

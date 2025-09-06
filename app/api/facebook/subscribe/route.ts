@@ -5,9 +5,18 @@ import { setConfig } from '@/lib/config-store'
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { pageId, pageName, pageAccessToken, formId, formName, webhookUrl } = body
+    const { pageId, pageName, pageAccessToken, forms, webhookUrl, formId, formName } = body
 
-    if (!pageId || !pageAccessToken || !formId || !webhookUrl) {
+    // Support both single form (legacy) and multiple forms (new)
+    let formsArray = []
+    if (forms && Array.isArray(forms)) {
+      formsArray = forms
+    } else if (formId && formName) {
+      // Legacy single form support
+      formsArray = [{ id: formId, name: formName }]
+    }
+
+    if (!pageId || !pageAccessToken || formsArray.length === 0 || !webhookUrl) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
     }
 
@@ -33,8 +42,7 @@ export async function POST(request: Request) {
     const configData = {
       pageId,
       pageName,
-      formId,
-      formName,
+      forms: formsArray,
       webhookUrl,
       accessToken: pageAccessToken
     }

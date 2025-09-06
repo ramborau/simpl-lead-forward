@@ -127,7 +127,7 @@ export default function HomePage() {
               <CheckCircle2 className="w-12 h-12 text-green-500" />
             </div>
             <h1 className="text-3xl font-bold text-[#00322c] mb-2">
-              Lead Forwarder <span className="text-sm font-normal text-gray-500">v2.0</span>
+              Lead Forwarder <span className="text-sm font-normal text-gray-500">v2.1</span>
             </h1>
             <p className="text-[#00322c]">
               Your Facebook leads are being forwarded automatically
@@ -147,12 +147,24 @@ export default function HomePage() {
                 <span className="text-[#075e54] text-sm font-medium">{config.pageName}</span>
               </div>
 
-              <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
-                <div className="flex items-center">
+              <div className="p-3 bg-green-50 rounded-lg border border-green-200">
+                <div className="flex items-center mb-2">
                   <Webhook className="w-5 h-5 text-[#00c307] mr-2" />
-                  <span className="font-medium">Lead Form</span>
+                  <span className="font-medium">Lead Forms ({(config.forms || []).length})</span>
                 </div>
-                <span className="text-[#075e54] text-sm font-medium">{config.formName}</span>
+                <div className="space-y-1">
+                  {(config.forms || []).map((form: any, index: number) => (
+                    <div key={form.id} className="text-[#075e54] text-sm">
+                      • {form.name}
+                    </div>
+                  ))}
+                  {/* Legacy support for single form */}
+                  {config.formName && !config.forms && (
+                    <div className="text-[#075e54] text-sm">
+                      • {config.formName}
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
@@ -258,6 +270,15 @@ export default function HomePage() {
           <div className="text-center text-[#00322c] text-sm">
             <p>When someone submits your Facebook lead form, the data will be automatically</p>
             <p>forwarded to your configured webhook URL in real-time.</p>
+            <p className="mt-4">
+              <a 
+                href="/api-docs" 
+                target="_blank"
+                className="text-[#00c307] hover:underline font-medium"
+              >
+                📚 View API Documentation
+              </a>
+            </p>
           </div>
         </div>
       </div>
@@ -270,7 +291,7 @@ export default function HomePage() {
         {/* Header */}
         <div className="text-center py-8">
           <h1 className="text-4xl font-bold text-[#00322c] mb-2">
-            Lead Forwarder <span className="text-sm font-normal text-gray-500">v2.0</span>
+            Lead Forwarder <span className="text-sm font-normal text-gray-500">v2.1</span>
           </h1>
           <p className="text-[#00322c]">
             Forward Facebook leads to your webhook instantly - no signup required
@@ -333,10 +354,19 @@ export default function HomePage() {
             <h3 className="font-medium text-[#075e54] mb-2">How it works:</h3>
             <ol className="text-sm text-[#075e54] space-y-1 list-decimal list-inside">
               <li>Enter your webhook URL where you want to receive leads</li>
-              <li>Connect your Facebook page and select a lead form</li>
+              <li>Connect your Facebook page and select multiple lead forms</li>
               <li>Leads are automatically forwarded to your webhook in real-time</li>
               <li>No database, no data storage - direct forwarding only</li>
             </ol>
+            <div className="mt-4 pt-2 border-t border-green-300">
+              <a 
+                href="/api-docs" 
+                target="_blank"
+                className="text-[#00c307] hover:underline font-medium text-sm"
+              >
+                📚 View API Documentation & Integration Guide
+              </a>
+            </div>
           </div>
         </div>
       </div>
