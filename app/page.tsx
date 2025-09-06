@@ -270,7 +270,7 @@ export default function HomePage() {
         {/* Header */}
         <div className="text-center py-8">
           <h1 className="text-4xl font-bold text-[#00322c] mb-2">
-            Lead Forwarder <span className="text-sm font-normal text-gray-500">v1.8</span>
+            Lead Forwarder <span className="text-sm font-normal text-gray-500">v2.0</span>
           </h1>
           <p className="text-[#00322c]">
             Forward Facebook leads to your webhook instantly - no signup required
