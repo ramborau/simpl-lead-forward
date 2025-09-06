@@ -127,7 +127,7 @@ export default function HomePage() {
               <CheckCircle2 className="w-12 h-12 text-green-500" />
             </div>
             <h1 className="text-3xl font-bold text-[#00322c] mb-2">
-              Lead Forwarder <span className="text-sm font-normal text-gray-500">v1.9</span>
+              Lead Forwarder <span className="text-sm font-normal text-gray-500">v2.0</span>
             </h1>
             <p className="text-[#00322c]">
               Your Facebook leads are being forwarded automatically
